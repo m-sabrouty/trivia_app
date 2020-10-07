@@ -78,6 +78,13 @@ class TriviaTestCase(unittest.TestCase):
 		self.assertEqual(data['message'], 'Deleted Successfully') 	
 		self.assertTrue(data['total_questions'])
 
+
+	def test_405_deleting_question_not_found_question(self):
+		res = self.client().delete('/questions/97')
+		data = json.loads(res.data.decode('utf-8'))
+		self.assertEqual(res.status_code, 405)
+		self.assertEqual(data['success'], False)
+	
 	###adding question with invalid inputs
 	def test_posting_question(self):
 		res = self.client().post('/questions/new',json=self.new_question)
@@ -86,6 +93,12 @@ class TriviaTestCase(unittest.TestCase):
 		self.assertEqual(res.status_code, 200)
 		self.assertEqual(data['success'], True)
 		
+	def test_405_posting_question_invalid(self):
+		res = self.client().post('/questions/new',json={})
+		data = json.loads(res.data.decode('utf-8'))
+
+		self.assertEqual(res.status_code, 405)
+		self.assertEqual(data['success'], False)
 
 	def test_404_sent_requesting_question_search(self):
 		res = self.client().post('/questions/search',json={})
